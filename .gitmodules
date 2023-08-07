@@ -1,0 +1,3 @@
+[submodule "home-assistant/hassio-compose"]
+	path = home-assistant/hassio-compose
+	url = https://github.com/postlund/hassio-compose
