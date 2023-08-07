@@ -1,28 +1,19 @@
-version: '3'
+version: "3"
 services:
   homeassistant:
+    image: lscr.io/linuxserver/homeassistant:2023.8.1
     container_name: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
+    privileged: true
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000      
+      - TZ=Etc/UTC
     volumes:
       - ./config:/config
       - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8123:8123 #optional
+    devices:
+      # - /path/to/device:/path/to/device #optional
     restart: unless-stopped
-    privileged: true
-    network_mode: host
-  hassio:
-    image: homeassistant/amd64-hassio-supervisor
-    container_name: hassio_supervisor
-    privileged: true
-    entrypoint: ["/bin/bash", "-c", "/scripts/start_hassio.sh"]
-    security_opt:
-      - seccomp:unconfined
-    environment:
-      - HOMEASSISTANT_REPOSITORY=homeassistant/qemux86-64-homeassistant
-      - SUPERVISOR_SHARE=${SUPERVISOR_SHARE}
-      - SUPERVISOR_NAME=hassio_supervisor
-      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket
-    volumes:
-      - ${SUPERVISOR_SHARE}:/data
-      - ./scripts:/scripts
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
